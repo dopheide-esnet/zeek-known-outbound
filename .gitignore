@@ -1,0 +1,13 @@
+*.swp
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+Thumbs.db
+*.password
+*~
+.btest.failed.dat
+.state
+.tmp
+

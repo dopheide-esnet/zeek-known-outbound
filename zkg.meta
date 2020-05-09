@@ -1,0 +1,8 @@
+[package]
+version = 0.1
+tags = notice, known, services, outbound 
+script_dir = scripts
+description = This script provides the ability to monitor and throw notices for outbound connections to a list of watched countries. It also adds orig and resp country codes to conn.log. It depends on having libmaxmind configured for GeoIP lookups. 
+test_command = cd tests && btest -d outbound-tests
+depends =
+	zeek >=3.0.0

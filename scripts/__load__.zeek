@@ -1,0 +1,2 @@
+@load ./known-outbound.zeek
+
