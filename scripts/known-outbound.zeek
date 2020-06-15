@@ -21,6 +21,8 @@ export {
 	type OutboundServicesInfo: record {
 		## The time at which the service was detected.
 		ts:             time            &log;
+		## uniq connection identifier 
+		uid: 		string		&log; 
 		## The orig host address.
 		orig_h:	        addr            &log;
 		## The resp host address on which the service is running.
@@ -192,7 +194,7 @@ event outbound_info_commit(info: OutboundServicesInfo, c: connection)
 
 					NOTICE([$note=Known::Suspicious_Outbound_Service,
 						    $msg=fmt("New connection to watched country %s",info$resp_cc),
-						    $id=c$id]);
+						    $conn=c]);
 					}
 				}
 			else
@@ -204,7 +206,7 @@ event outbound_info_commit(info: OutboundServicesInfo, c: connection)
 			Log::write(Known::OUTBOUND_SERVICES_LOG, info);
 			NOTICE([$note=Known::Suspicious_Outbound_Service,
 					$msg=fmt("New connection to watched country %s",info$resp_cc),
-					$id=c$id]);
+					$conn=c]);
 			}
 		}
 	}
@@ -223,6 +225,7 @@ event outbound_service_add(info: OutboundServicesInfo, c: connection)
 	 # service to log can be a subset of info$service if some were already seen
 	local info_to_log: OutboundServicesInfo;
 	info_to_log$ts = info$ts;
+	info_to_log$uid=info$uid; 
 	info_to_log$orig_h = info$orig_h;
 	info_to_log$resp_h = info$resp_h;
 	info_to_log$resp_cc = info$resp_cc;
@@ -249,7 +252,7 @@ event outbound_service_add(info: OutboundServicesInfo, c: connection)
 		Log::write(Known::OUTBOUND_SERVICES_LOG, info_to_log);
 		NOTICE([$note=Known::Suspicious_Outbound_Service,
 				$msg=fmt("New connection to watched country %s",info$resp_cc),
-				$id=c$id]);
+				$conn=c]);
 	@endif
 
 	}
@@ -319,7 +322,8 @@ function outbound_services_done(c: connection)
 			if ( s[0] != "-" )
 				add tempservs[s];
 
-	local info = OutboundServicesInfo($ts = network_time(),
+	local info = OutboundServicesInfo($ts = network_time(), 
+					$uid=c$uid, 
 		                      $orig_h = id$orig_h, 
 							  $resp_h = id$resp_h,
 							  $resp_cc = c$resp_cc,
